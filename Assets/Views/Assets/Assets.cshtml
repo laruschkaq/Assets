@@ -1,0 +1,249 @@
+﻿@using DataAccesLayer.Entities
+@model DataAccessLayer.Models.AssetsViewModel
+@{
+    ViewBag.Title = "Assets";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="page-header-card">
+    <div class="card-header">
+        <div class="header-icon-block">
+            <span class="fa fa-archive"></span>
+        </div>
+        <h2>
+            Manage Assets
+            <small>View And Manage Assets</small>
+        </h2>
+    </div>
+</div>
+
+<div class="filter-page-wrapper">
+
+    <nav class="filter-content">
+        <div class="sidebar-header">
+            <span class="fa fa-search"></span> Search
+        </div>
+
+        <div class="col-md-12 text-right">
+            <div class="form-group">
+                <button type="button" onclick="clearFilters()" class="btn btn-default btn-sm">Clear</button>
+                <button type="button" id="btnReviewFilterSearch" class="btn btn-aus btn-sm">Search</button>
+            </div>
+        </div>
+
+        <form id="searchForm" name="searchForm">
+            <div class="col-md-12">
+                <div class="form-group">
+                    @Html.LabelFor(a => a.Name)
+                    @Html.TextBoxFor(a => a.Name, new { @class = "form-control", @placeholder = "Asset Name" })
+                </div>
+            </div>
+        </form>
+    </nav>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="container-fluid">
+                    <div class="body" style="background-color: #ECF0F5;">
+
+                        @(Html.Kendo().Grid<DataAccessLayer.Models.AssetsViewModel>()
+                            .Name("Grid")
+                            .Columns(columns =>
+                            {
+                                columns.Bound(o => o.FirstName).Title("Asset Name");
+                                columns.Bound(o => o.LastName).Title("Version");
+                                columns.Bound(o => o.IdentityNumber).Title("Firmware");
+                                columns.Bound(o => o.Active).Title("Active").ClientTemplate("<div style='text-align:center;'>#if(Active){#<img class='grid-icon gb-activation' src='../Images/icons/yes.png' title='Active' />" +
+                                                                                               "#}else{#<img class='grid-icon gb-activation' src='../Images/icons/no.png' title='Inactive' />#}#</div>").Width(60).Filterable(false).Sortable(false);
+                                columns.Bound(o => o.Id).ClientTemplate("<img class='grid-button gb-update' src='../Images/icons/update.png' onclick='edit(#=Id#)' title='Update' />" +
+                                                                        "#if(Active){#<img class='grid-button gb-delete' src='/images/icons/no.png' onclick='deactivate(#=Id#)' title='Deactivate' />#}else{#<img class='grid-button gb-delete' src='/images/icons/yes.png' onclick='reactivate(#=Id#)' title='Reactivate' />#}#")
+                                    .Width(80)
+                                    .Title("Actions")
+                                    .Filterable(false)
+                                    .Sortable(false)
+                                    .Groupable(false);
+                            })
+                            .ToolBar(toolbar => { toolbar.ClientTemplate("<a class='btn btn-aus btn-sm' id='btnFilter' href='javascript:;'><i class='fa fa-search'></i>&nbsp; " + "Filter" + "<a class='btn btn-aus btn-sm' href='javascript:;' onclick='edit(0)'><i class='fa fa-plus'></i>&nbsp; " + "Add" + "</a><a class='btn btn-sm btn-default k-button-icontext k-grid-excel' style='float:right;' href='javascript:;'><span class='k-icon k-i-excel'></span>Excel</a><a style='float:right;' class='btn btn-sm btn-default k-button-icontext k-grid-pdf' href='javascript:;'><span class='k-icon k-i-pdf'></span>PDF</a>"); })
+                            .Excel(excel => excel
+                                .FileName("Assets.xlsx")
+                                .Filterable(true)
+                                .AllPages(true)
+                                .ProxyURL(Url.Action("Excel_Export_Save", "Home"))
+                            )
+                            .Pdf(pdf => pdf
+                                .AllPages()
+                                .AvoidLinks()
+                                .PaperSize("A4")
+                                .Scale(0.7)
+                                .Margin("1cm", "1cm", "1cm", "1cm")
+                                .Landscape()
+                                .RepeatHeaders()
+                                .TemplateId("page-template")
+                                .FileName("Assets.pdf")
+                                .ProxyURL(Url.Action("Pdf_Export_Save", "Home"))
+                            )
+                            .Pageable(pager => pager.AlwaysVisible(true).ButtonCount(5).Refresh(true).PageSizes(new[] { 10, 20, 50, 100 }))
+                            .NoRecords(n => n.Template($"<div class='no-data-container'>{"No Date"}</div>"))
+                            .Mobile()
+                            .Scrollable(a => a.Height("auto"))
+                            .PersistSelection()
+                            .DataSource(d => d
+                                .Ajax()
+                                .Sort(sort => sort.Add(nameof(DataAccessLayer.Models.AssetsViewModel.Name)).Ascending())
+                                .Model(a => a.Id(p => p.Id))
+                                .Read(read => read.Action("PopulatePatientsGrid", "Patient").Data("gridFilter"))
+                                .PageSize(20)
+                            ))
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <script>
+ 
+        $(document).ready(function () {
+            clearFilters();
+        });
+
+        $("#btnReviewFilterSearch").on("click",
+            function () {
+                loadGrid();
+            });
+
+        function gridFilter() {
+
+            return {
+                "Name": $(".filter-content #Name").val()
+            };
+
+        }
+
+        function clearFilters() {
+
+            $("#Name").val('');
+
+            var grid = $('#Grid').data('kendoGrid');
+            grid.dataSource.read({});
+        }
+
+        function loadGrid() {
+            var myParameters = gridFilter();
+            var grid = $('#Grid').data('kendoGrid');
+            grid.dataSource.read({ filter: myParameters });
+        }
+
+        function edit(id) {
+            $.ajax({
+                cache: false,
+                type: 'get',
+                url: '/Assets/GetAssets',
+                data: { 'id': id },
+                success: function (result) {
+                    $("#GenericModal").empty().html(result).modal('show');
+
+                }
+            });
+        }
+
+        function deactivate(id) {
+
+            var dialog = $('#GenericDialog');
+
+            dialog.kendoDialog({
+                width: "400px",
+                title: 'Deactivate',
+                closable: false,
+                modal: true,
+                content: "<p> Deactivate Record ?</p>",
+                actions: [
+                    { text: 'Cancel' },
+                    {
+                        text: 'Ok',
+                        action: function () {
+
+
+                            $.ajax({
+                                cache: false,
+                                type: 'post',
+                                url: '/Assets/DeactivateAssets/',
+                                data: { 'id': id },
+                                success: function (result) {
+
+                                    if (result.Id == 1) {
+
+                                        Swal.fire(
+                                            'Successful',
+                                            result.Message,
+                                            'success'
+                                        );
+
+                                        var grid = $("#Grid").data("kendoGrid");
+                                        grid.dataSource.read();
+                                    }
+                                },
+                                error: function (ex) {
+
+                                }
+                            });
+                        },
+                        primary: true
+                    },
+                ]
+            });
+
+            dialog.data("kendoDialog").open();
+        }
+
+        function reactivate(id) {
+
+            var dialog = $('#GenericDialog');
+
+            dialog.kendoDialog({
+                width: "400px",
+                title: 'Reactivate',
+                closable: false,
+                modal: true,
+                content: "<p> Reactivate Record ?/p>",
+                actions: [
+                    { text: 'Cancel' },
+                    {
+                        text: 'Ok',
+                        action: function () {
+
+
+                            $.ajax({
+                                cache: false,
+                                type: 'post',
+                                url: '/Assets/ReactivateAssets/',
+                                data: { 'id': id },
+                                success: function (result) {
+
+                                    if (result.Id == 1) {
+
+                                        Swal.fire(
+                                            'Successful',
+                                            result.Message,
+                                            'success'
+                                        );
+
+                                        var grid = $("#Grid").data("kendoGrid");
+                                        grid.dataSource.read();
+                                    }
+                                },
+                                error: function (ex) {
+
+                                }
+                            });
+                        },
+                        primary: true
+                    },
+                ]
+            });
+
+            dialog.data("kendoDialog").open();
+        }
+
+    </script>
