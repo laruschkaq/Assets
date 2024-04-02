@@ -14,6 +14,7 @@ public class AssetsBusinessLogic : IAssetsBusinessLogic
     {
         _dbContext = new DbContext();
     }
+
     public GlobalViewModel.ResultModel Add(AssetsViewModel data)
     {
         using var transaction = _dbContext.Database.BeginTransaction();
@@ -38,6 +39,7 @@ public class AssetsBusinessLogic : IAssetsBusinessLogic
                 SerialNumber = data.SerialNumber,
                 Active = true,
                 DeviceGroupId = data.DeviceGroupId,
+                FirmwareVersion = data.FirmwareVersion,
                 CreatedOnDateTime = DateTime.Now
             };
 
@@ -80,6 +82,7 @@ public class AssetsBusinessLogic : IAssetsBusinessLogic
             existingAsset.SerialNumber = data.SerialNumber;
             existingAsset.Active = true;
             existingAsset.DeviceGroupId = data.DeviceGroupId;
+            existingAsset.FirmwareVersion = data.FirmwareVersion;
             existingAsset.LastModifiedOnDateTime = DateTime.Now;
 
             _dbContext.SaveChanges();
@@ -177,12 +180,20 @@ public class AssetsBusinessLogic : IAssetsBusinessLogic
         };
     }
 
-    // public DataSourceResult PopulateGrid(DataSourceRequest data)
-    // {
-    //     return null;
-    // }
+    public List<AssetsGridViewModel> PopulateGrid()
+    {
+        return _dbContext.Assets.Select(o => new AssetsGridViewModel
+        {
+            Id = o.Id,
+            Name = o.Name,
+            SerialNumber = o.SerialNumber,
+            DeviceGroup = o.NavDeviceGroups.Name,
+            FirmwareVersion = o.FirmwareVersion,
+            Active = o.Active
+        }).ToList();
+    }
 
-    public IEnumerable<GlobalViewModel.DropdownListViewModel> GetAllActiveAssets(int loggedInUserId)
+    public IEnumerable<GlobalViewModel.DropdownListViewModel> GetAllActiveAssets()
     {
         return _dbContext.Assets.Where(x => x.Active == true).Select(a =>
             new GlobalViewModel.DropdownListViewModel()
@@ -206,6 +217,7 @@ public class AssetsBusinessLogic : IAssetsBusinessLogic
             Name = assets.Name,
             SerialNumber = assets.SerialNumber,
             DeviceGroupId = assets.DeviceGroupId,
+            FirmwareVersion = assets.FirmwareVersion,
             Active = assets.Active
         };
         return result;

@@ -1,5 +1,4 @@
-﻿@using DataAccesLayer.Entities
-@model DataAccessLayer.Models.AssetsViewModel
+﻿@model List<AssetsGridViewModel>
 @{
     ViewBag.Title = "Assets";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -7,11 +6,7 @@
 
 <div class="page-header-card">
     <div class="card-header">
-        <div class="header-icon-block">
-            <span class="fa fa-archive"></span>
-        </div>
         <h2>
-            Manage Assets
             <small>View And Manage Assets</small>
         </h2>
     </div>
@@ -19,59 +14,74 @@
 
 <div class="filter-page-wrapper">
 
-    <nav class="filter-content">
-        <div class="sidebar-header">
-            <span class="fa fa-search"></span> Search
-        </div>
-
-        <div class="col-md-12 text-right">
-            <div class="form-group">
-                <button type="button" onclick="clearFilters()" class="btn btn-default btn-sm">Clear</button>
-                <button type="button" id="btnReviewFilterSearch" class="btn btn-aus btn-sm">Search</button>
-            </div>
-        </div>
-
-        <form id="searchForm" name="searchForm">
-            <div class="col-md-12">
-                <div class="form-group">
-                    @Html.LabelFor(a => a.Name)
-                    @Html.TextBoxFor(a => a.Name, new { @class = "form-control", @placeholder = "Asset Name" })
-                </div>
-            </div>
-        </form>
-    </nav>
-
     <div class="container">
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="container-fluid">
+                    <button type="button" class="btn btn-default" onclick="edit(0)">Add</button>
                     <div class="body" style="background-color: #ECF0F5;">
-                        <tbody id="assets-container">
-                        <tr>
-                            <td>
-                                @Model.Name
-                            </td>
-                            <td>
-                                @Model.SerialNumber
-                            </td>
-                            <td>
-                                @if (@Model.Active)
-                                {
-                                    <img class="grid-icon gb-activation" src="Images/Icons/active.png" title="Active" alt="Active">
-                                }
-                                else
-                                {
-                                    <img class="grid-icon gb-activation" src="Images/icons/inactive.png" title="Inactive" alt="Inactive">
-                                }
-                            </td>
-                            <td>
-                                <img class="grid-icon gb-activation" src="Images/icons/edit.png" title="Edit" alt="Edit" onclick="edit(id)">
-                            </td>
-                            <td>
-                                <img class="grid-icon gb-activation" src="Images/icons/deactivate.png" title="Deactivate" alt="Deactivate" onclick="deactivate(id)">
-                            </td>
-                        </tr>
-                        </tbody>
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model[0].Name)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model[0].SerialNumber)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model[0].FirmwareVersion)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model[0].DeviceGroup)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model[0].Active)
+                                </th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.SerialNumber)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.FirmwareVersion)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.DeviceGroup)
+                                    </td>
+                                   <td>
+                                       @if (item.Active)
+                                       {
+                                           <img class="grid-icon gb-activation" src="~/Images/Icons/active.png" style="width:24px;height:24px;" title="Active" alt="Active">
+                                       }
+                                       else
+                                       {
+                                           <img class="grid-icon gb-activation" src="~/Images/icons/inactive.png" style="width:24px;height:24px;" title="Inactive" alt="Inactive">
+                                       }
+                                   </td>
+                                    <td>
+                                        <img class="grid-icon gb-activation" src="~/Images/icons/edit.png" style="width:24px;height:24px;" title="Edit" alt="Edit" onclick="edit(@item.Id)">
+                                        @if (item.Active)
+                                        {
+                                            <img class="grid-icon gb-activation" src="~/Images/icons/deactivate.png" style="width:24px;height:24px;" title="Deactivate" alt="Deactivate" onclick="deactivate(@item.Id)">
+                                        }
+                                        else
+                                        {
+                                            <img class="grid-icon gb-activation" src="~/Images/icons/active.png" style="width:24px;height:24px;" title="Reactivate" alt="Reactivate" onclick="reactivate(@item.Id)">
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -99,7 +109,7 @@
             $.ajax({
                 cache: false,
                 type: 'post',
-                url: '/Assets/DeactivateAssets/',
+                url: '/Assets/DeactivateAssets',
                 data: { 'id': id },
                 success: function (result) {
     
@@ -107,13 +117,11 @@
     
                         Swal.fire(
                             'Successful',
-                            result.Message,
+                            result.message,
                             'success'
                         );
-    
-                        var grid = $("#Grid").data("kendoGrid");
-                        grid.dataSource.read();
                     }
+                    location.reload();
                 },
                 error: function (ex) {
     
@@ -126,7 +134,7 @@
             $.ajax({
                 cache: false,
                 type: 'post',
-                url: '/Assets/ReactivateAssets/',
+                url: '/Assets/ReactivateAssets',
                 data: { 'id': id },
                 success: function (result) {
 
@@ -134,13 +142,11 @@
 
                         Swal.fire(
                             'Successful',
-                            result.Message,
+                            result.message,
                             'success'
                         );
-
-                        var grid = $("#Grid").data("kendoGrid");
-                        grid.dataSource.read();
                     }
+                    location.reload();
                 },
                 error: function (ex) {
 

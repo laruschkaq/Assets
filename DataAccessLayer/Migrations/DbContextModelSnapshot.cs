@@ -87,9 +87,17 @@ namespace DataAccessLayer.Migrations
                         .HasMaxLength(512)
                         .HasColumnType("nvarchar(512)");
 
+                    b.Property<int?>("ParentDeviceGroupId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.ToTable("DeviceGroup", "dbo");
+                    b.HasIndex("ParentDeviceGroupId");
+
+                    b.ToTable("DeviceGroup", "dbo", t =>
+                        {
+                            t.HasCheckConstraint("CK_No_Self_Reference", "1 = case when ParentDeviceGroupId = Id then 0 else 1 end");
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.DataProtectionKey", b =>
@@ -120,6 +128,16 @@ namespace DataAccessLayer.Migrations
                         .IsRequired();
 
                     b.Navigation("NavDeviceGroups");
+                });
+
+            modelBuilder.Entity("DataAccesLayer.Entities.DeviceGroup", b =>
+                {
+                    b.HasOne("DataAccesLayer.Entities.DeviceGroup", "NavParentDeviceGroups")
+                        .WithMany()
+                        .HasForeignKey("ParentDeviceGroupId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("NavParentDeviceGroups");
                 });
 
             modelBuilder.Entity("DataAccesLayer.Entities.DeviceGroup", b =>

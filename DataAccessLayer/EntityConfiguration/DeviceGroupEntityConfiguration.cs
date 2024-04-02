@@ -32,5 +32,14 @@ public class DeviceGroupEntityConfiguration : IEntityTypeConfiguration<DeviceGro
         modelBuilder
             .Property(x => x.Active)
             .IsRequired();
+
+        modelBuilder
+            .HasOne(group => group.NavParentDeviceGroups)
+            .WithMany()
+            .HasPrincipalKey(group => group.Id)
+            .HasForeignKey(x => x.ParentDeviceGroupId);
+
+        modelBuilder.HasCheckConstraint("CK_No_Self_Reference",
+            "1 = case when ParentDeviceGroupId = Id then 0 else 1 end");
     }
 }

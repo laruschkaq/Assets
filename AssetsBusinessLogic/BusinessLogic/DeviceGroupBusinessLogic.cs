@@ -14,6 +14,7 @@ public class DeviceGroupBusinessLogic : IDeviceGroupBusinessLogic
     {
         _dbContext = new DbContext();
     }
+
     public GlobalViewModel.ResultModel Add(DeviceGroupViewModel data)
     {
         using var transaction = _dbContext.Database.BeginTransaction();
@@ -35,7 +36,8 @@ public class DeviceGroupBusinessLogic : IDeviceGroupBusinessLogic
             {
                 Name = data.Name,
                 Active = true,
-                CreatedOnDateTime = DateTime.Now
+                CreatedOnDateTime = DateTime.Now,
+                ParentDeviceGroupId = data.ParentDeviceGroupId
             };
 
             _dbContext.Add(device);
@@ -75,6 +77,7 @@ public class DeviceGroupBusinessLogic : IDeviceGroupBusinessLogic
 
             existingDevice.Name = data.Name;
             existingDevice.Active = true;
+            existingDevice.ParentDeviceGroupId = data.ParentDeviceGroupId;
             existingDevice.LastModifiedOnDateTime = DateTime.Now;
 
             _dbContext.SaveChanges();
@@ -173,12 +176,19 @@ public class DeviceGroupBusinessLogic : IDeviceGroupBusinessLogic
         };
     }
 
-    // public DataSourceResult PopulateGrid(DataSourceRequest data)
-    // {
-    //     return null;
-    // }
 
-    public IEnumerable<GlobalViewModel.DropdownListViewModel> GetAllActiveDeviceGroup(int loggedInUserId)
+    public List<DeviceGroupGridViewModel> PopulateGrid()
+    {
+        return _dbContext.DeviceGroup.Select(o => new DeviceGroupGridViewModel
+        {
+            Id = o.Id,
+            Name = o.Name,
+            ParentDeviceGroup = o.NavParentDeviceGroups == null ? "" : o.NavParentDeviceGroups.Name,
+            Active = o.Active
+        }).ToList();
+    }
+
+    public IEnumerable<GlobalViewModel.DropdownListViewModel> GetAllActiveDeviceGroups()
     {
         return _dbContext.DeviceGroup.Where(x => x.Active == true).Select(a =>
             new GlobalViewModel.DropdownListViewModel()

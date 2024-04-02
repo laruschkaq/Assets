@@ -11,4 +11,14 @@
         <ProjectReference Include="..\AssetsBusinessLogic\AssetsBusinessLogic.csproj" />
         <ProjectReference Include="..\DataAccessLayer\DataAccessLayer.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Serilog" Version="3.1.1" />
+      <PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />
+      <PackageReference Include="SweetAlert" Version="1.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="wwwroot\Plugins\" />
+    </ItemGroup>
 </Project>

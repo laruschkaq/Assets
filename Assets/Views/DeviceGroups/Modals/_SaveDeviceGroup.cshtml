@@ -1,5 +1,5 @@
 ﻿
-@model DataAccessLayer.Models.AssetsViewModel
+@model DataAccessLayer.Models.DeviceGroupViewModel
 @{
     Layout = null;
 }
@@ -7,10 +7,10 @@
 <div class="modal-dialog modal-lg">
     <div class="modal-content">
 
-        <form asp-controller="Assets" asp-action="SaveAssets" id="SaveForm" method="post" enctype="multipart/form-data">
+        <form asp-controller="DeviceGroups" asp-action="SaveDeviceGroups" id="SaveForm" method="post" enctype="multipart/form-data">
 
             <div class="modal-header modal-header-fill">
-                <h4 class="modal-title">@(Model.Id == 0 ? "Add Asset" : "Update Asset")</h4>
+                <h4 class="modal-title">@(Model.Id == 0 ? "Add Device Group" : "Update Device Group")</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -29,27 +29,11 @@
 
                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                         <div class="form-group">
-                            @Html.LabelFor(a => a.SerialNumber)
-                            @(Html.TextBoxFor(a => a.SerialNumber, new { @class = "form-control required", @required = "required", @placeholder = "Serial Number"}))
-                            @Html.ValidationMessageFor(a => a.SerialNumber)
-                        </div>
-                    </div>
-
-                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                        <div class="form-group">
-                            @Html.LabelFor(a => a.FirmwareVersion)
-                            @(Html.TextBoxFor(a => a.FirmwareVersion, new { @class = "form-control required", @required = "required", @placeholder = "Firmware Version" }))
-                            @Html.ValidationMessageFor(a => a.FirmwareVersion)
-                        </div>
-                    </div>
-
-                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                        <div class="form-group">
-                            @Html.LabelFor(a => a.DeviceGroupId)
+                            @Html.LabelFor(a => a.ParentDeviceGroupId)
                             <div class="input-group-append">
-                                @Html.DropDownListFor(x => x.DeviceGroupId, new SelectList(Model.DeviceGroupList, "Id", "Name", "Select"), new { @class = "form-control select2bs4 required", @required = "required", @placeholder = "Select" })
+                                @Html.DropDownListFor(x => x.ParentDeviceGroupId, new SelectList(Model.ParentDeviceGroupList, "Id", "Name", "Select"), new { @class = "form-control select2bs4", @placeholder = "Select" })
                             </div>
-                            @Html.ValidationMessageFor(a => a.DeviceGroupId)
+                            @Html.ValidationMessageFor(a => a.ParentDeviceGroupId)
                         </div>
                     </div>
 
