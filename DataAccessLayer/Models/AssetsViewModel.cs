@@ -25,9 +25,8 @@ public class AssetsViewModel
     [Display(Name = "Firmware Version")]
     public string FirmwareVersion { get; set; } = new string("");
     
-    [Required(ErrorMessage = "Required")]
     [Display(Name = "Device Group")]
-    public int DeviceGroupId { get; set; }
+    public int? DeviceGroupId { get; set; }
     public List<GlobalViewModel.DropdownListViewModel> DeviceGroupList { get; set; }
     
     [Display(Name = "Status")]

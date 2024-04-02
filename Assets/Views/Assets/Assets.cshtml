@@ -113,15 +113,16 @@
                 data: { 'id': id },
                 success: function (result) {
     
-                    if (result.Id == 1) {
+                    if (result.id == 1) {
     
                         Swal.fire(
                             'Successful',
                             result.message,
                             'success'
-                        );
+                        ).then(function () {
+                             location.reload();
+                         });
                     }
-                    location.reload();
                 },
                 error: function (ex) {
     
@@ -138,15 +139,16 @@
                 data: { 'id': id },
                 success: function (result) {
 
-                    if (result.Id == 1) {
+                    if (result.id == 1) {
 
                         Swal.fire(
                             'Successful',
                             result.message,
                             'success'
-                        );
+                        ).then(function () {
+                             location.reload();
+                         });
                     }
-                    location.reload();
                 },
                 error: function (ex) {
 

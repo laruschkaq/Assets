@@ -47,7 +47,7 @@ public class DeviceGroupBusinessLogic : IDeviceGroupBusinessLogic
 
             return new GlobalViewModel.ResultModel
             {
-                Id = (int)GlobalEnums.EnumResultValues.Success, Message = "Success"
+                Id = (int)GlobalEnums.EnumResultValues.Success, Message = "Record Added"
             };
         }
         catch (Exception ex)
@@ -87,7 +87,7 @@ public class DeviceGroupBusinessLogic : IDeviceGroupBusinessLogic
 
             return new GlobalViewModel.ResultModel
             {
-                Id = (int)GlobalEnums.EnumResultValues.Success, Message = "Success"
+                Id = (int)GlobalEnums.EnumResultValues.Success, Message = "Record Updated"
             };
         }
         catch (Exception ex)
@@ -124,7 +124,7 @@ public class DeviceGroupBusinessLogic : IDeviceGroupBusinessLogic
 
             return new GlobalViewModel.ResultModel
             {
-                Id = (int)GlobalEnums.EnumResultValues.Success, Message = "Success"
+                Id = (int)GlobalEnums.EnumResultValues.Success, Message = "Deactivated"
             };
         }
         catch (Exception ex)
@@ -161,7 +161,7 @@ public class DeviceGroupBusinessLogic : IDeviceGroupBusinessLogic
 
             return new GlobalViewModel.ResultModel
             {
-                Id = (int)GlobalEnums.EnumResultValues.Success, Message = "Success"
+                Id = (int)GlobalEnums.EnumResultValues.Success, Message = "Reactivated"
             };
         }
         catch (Exception ex)

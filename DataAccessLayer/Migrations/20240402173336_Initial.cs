@@ -15,21 +15,6 @@ namespace DataAccessLayer.Migrations
                 name: "dbo");
 
             migrationBuilder.CreateTable(
-                name: "DataProtectionKeys",
-                schema: "dbo",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FriendlyName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Xml = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DataProtectionKeys", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "DeviceGroup",
                 schema: "dbo",
                 columns: table => new
@@ -64,7 +49,7 @@ namespace DataAccessLayer.Migrations
                     Name = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: false),
                     SerialNumber = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: false),
                     FirmwareVersion = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
-                    DeviceGroupId = table.Column<int>(type: "int", nullable: false),
+                    DeviceGroupId = table.Column<int>(type: "int", nullable: true),
                     Active = table.Column<bool>(type: "bit", nullable: false),
                     CreatedOnDateTime = table.Column<DateTime>(type: "datetime2(0)", nullable: false),
                     LastModifiedOnDateTime = table.Column<DateTime>(type: "datetime2(0)", nullable: false)
@@ -95,32 +80,33 @@ namespace DataAccessLayer.Migrations
             migrationBuilder.InsertData(
                 table: "DeviceGroup",
                 columns: new[] { "Name", "ParentDeviceGroupId", "Active", "CreatedOnDateTime", "LastModifiedOnDateTime" },
-                values: new object[] { "Group 1", null, true, "2024-04-02 14:00", "2024-04-02 14:00" });
+                values: new object[] { "Battery-Powered", null, true, "2024-04-02 14:00", "2024-04-02 14:00" });
             
             migrationBuilder.InsertData(
                 table: "DeviceGroup",
                 columns: new[] { "Name", "ParentDeviceGroupId", "Active", "CreatedOnDateTime", "LastModifiedOnDateTime" },
-                values: new object[] { "Group 2", null, true, "2024-04-02 14:00", "2024-04-02 14:00" })
+                values: new object[] { "OBDII", null, true, "2024-04-02 14:00", "2024-04-02 14:00" })
                 ;
             migrationBuilder.InsertData(
                 table: "DeviceGroup",
                 columns: new[] { "Name", "ParentDeviceGroupId", "Active", "CreatedOnDateTime", "LastModifiedOnDateTime" },
-                values: new object[] { "Sub Group 2", 2, true, "2024-04-02 14:00", "2024-04-02 14:00" });
+                values: new object[] { "2G", 1, true, "2024-04-02 14:00", "2024-04-02 14:00" });
             
             migrationBuilder.InsertData(
                 table: "Assets",
                 columns: new[] { "Name", "SerialNumber", "FirmwareVersion", "DeviceGroupId", "Active", "CreatedOnDateTime", "LastModifiedOnDateTime" },
-                values: new object[] { "Asset", "2165541", "1.0", 1, true, "2024-04-02 14:00", "2024-04-02 14:00" });
+                values: new object[] { "G150 Global", "G150-00001", "1.0", 3, true, "2024-04-02 14:00", "2024-04-02 14:00" });
             
             migrationBuilder.InsertData(
                 table: "Assets",
                 columns: new[] { "Name", "SerialNumber", "FirmwareVersion", "DeviceGroupId", "Active", "CreatedOnDateTime", "LastModifiedOnDateTime" },
-                values: new object[] { "Asset1", "6549684", "1.0", 2, true, "2024-04-02 14:00", "2024-04-02 14:00" });
+                values: new object[] { "Oyster Edge", "OE-00001", "2.0", 1, true, "2024-04-02 14:00", "2024-04-02 14:00" });
             
             migrationBuilder.InsertData(
                 table: "Assets",
                 columns: new[] { "Name", "SerialNumber", "FirmwareVersion", "DeviceGroupId", "Active", "CreatedOnDateTime", "LastModifiedOnDateTime" },
-                values: new object[] { "Asset2", "1454984", "1.0", 3, true, "2024-04-02 14:00", "2024-04-02 14:00" });
+                values: new object[] { "Remora3", "RE-00001", "1.2", 1, true, "2024-04-02 14:00", "2024-04-02 14:00" });
+            
         }
 
         /// <inheritdoc />
@@ -128,10 +114,6 @@ namespace DataAccessLayer.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Assets",
-                schema: "dbo");
-
-            migrationBuilder.DropTable(
-                name: "DataProtectionKeys",
                 schema: "dbo");
 
             migrationBuilder.DropTable(

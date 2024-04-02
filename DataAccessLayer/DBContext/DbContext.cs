@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DataAccessLayer.DBContext;
 
-public class DbContext : Microsoft.EntityFrameworkCore.DbContext, IDataProtectionKeyContext
+public class DbContext : Microsoft.EntityFrameworkCore.DbContext
 {
     public DbContext() 
     {
@@ -43,6 +43,4 @@ public class DbContext : Microsoft.EntityFrameworkCore.DbContext, IDataProtectio
     
     public virtual DbSet<Assets> Assets { get; set; }
     public virtual DbSet<DeviceGroup> DeviceGroup { get; set; }
-    
-    public virtual DbSet<DataProtectionKey> DataProtectionKeys { get; set; }
 }

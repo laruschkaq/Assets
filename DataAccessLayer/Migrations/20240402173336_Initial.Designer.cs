@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(DataAccessLayer.DBContext.DbContext))]
-    [Migration("20240402124919_Initial")]
+    [Migration("20240402173336_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -40,7 +40,7 @@ namespace DataAccessLayer.Migrations
                     b.Property<DateTime>("CreatedOnDateTime")
                         .HasColumnType("datetime2(0)");
 
-                    b.Property<int>("DeviceGroupId")
+                    b.Property<int?>("DeviceGroupId")
                         .HasColumnType("int");
 
                     b.Property<string>("FirmwareVersion")
@@ -103,32 +103,12 @@ namespace DataAccessLayer.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.DataProtectionKey", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("FriendlyName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Xml")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("DataProtectionKeys", "dbo");
-                });
-
             modelBuilder.Entity("DataAccesLayer.Entities.Assets", b =>
                 {
                     b.HasOne("DataAccesLayer.Entities.DeviceGroup", "NavDeviceGroups")
                         .WithMany("NavAssets")
                         .HasForeignKey("DeviceGroupId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("NavDeviceGroups");
                 });

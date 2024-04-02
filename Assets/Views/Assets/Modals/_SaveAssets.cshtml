@@ -47,7 +47,7 @@
                         <div class="form-group">
                             @Html.LabelFor(a => a.DeviceGroupId)
                             <div class="input-group-append">
-                                @Html.DropDownListFor(x => x.DeviceGroupId, new SelectList(Model.DeviceGroupList, "Id", "Name", "Select"), new { @class = "form-control select2bs4 required", @required = "required", @placeholder = "Select" })
+                                @Html.DropDownListFor(x => x.DeviceGroupId, new SelectList(Model.DeviceGroupList, "Id", "Name", "Select"), new { @class = "select2bs4" })
                             </div>
                             @Html.ValidationMessageFor(a => a.DeviceGroupId)
                         </div>
@@ -67,20 +67,32 @@
     await Html.RenderPartialAsync("_ValidationScriptsPartial");
 }
 <script>
-   $(function () {
 
+    $(document).ready(function () {
+        $("#DeviceGroupId").val('').trigger('change');
+    });
+    
+   $(function () {
+        $('#SaveForm .select2bs4').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Select',
+            allowClear: true
+        });
+       
        $('#SaveForm').ajaxForm({
            complete: function (result) {
 
                result = jQuery.parseJSON(result.responseText);
 
-               if (result.Id == 1) {
+               if (result.id == 1) {
 
                    Swal.fire(
                        "Success",
                        result.message,
                        'success'
-                   );
+                   ).then(function () {
+                        location.reload();
+                    });
 
                    $(".btnCloseModal").click();
                }
@@ -89,7 +101,9 @@
                        "Failed",
                        result.message,
                        'error'
-                   );
+                   ).then(function () {
+                        location.reload();
+                    });
                }
            }
        });

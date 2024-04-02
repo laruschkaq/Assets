@@ -50,7 +50,7 @@ public class AssetsBusinessLogic : IAssetsBusinessLogic
 
             return new GlobalViewModel.ResultModel
             {
-                Id = (int)GlobalEnums.EnumResultValues.Success, Message = "Success"
+                Id = (int)GlobalEnums.EnumResultValues.Success, Message = "Record Added"
             };
         }
         catch (Exception ex)
@@ -91,7 +91,7 @@ public class AssetsBusinessLogic : IAssetsBusinessLogic
 
             return new GlobalViewModel.ResultModel
             {
-                Id = (int)GlobalEnums.EnumResultValues.Success, Message = "Success"
+                Id = (int)GlobalEnums.EnumResultValues.Success, Message = "Record Updated"
             };
         }
         catch (Exception ex)
@@ -128,7 +128,7 @@ public class AssetsBusinessLogic : IAssetsBusinessLogic
 
             return new GlobalViewModel.ResultModel
             {
-                Id = (int)GlobalEnums.EnumResultValues.Success, Message = "Success"
+                Id = (int)GlobalEnums.EnumResultValues.Success, Message = "Deactivated"
             };
         }
         catch (Exception ex)
@@ -165,7 +165,7 @@ public class AssetsBusinessLogic : IAssetsBusinessLogic
 
             return new GlobalViewModel.ResultModel
             {
-                Id = (int)GlobalEnums.EnumResultValues.Success, Message = "Success"
+                Id = (int)GlobalEnums.EnumResultValues.Success, Message = "Reactivated"
             };
         }
         catch (Exception ex)
@@ -187,7 +187,7 @@ public class AssetsBusinessLogic : IAssetsBusinessLogic
             Id = o.Id,
             Name = o.Name,
             SerialNumber = o.SerialNumber,
-            DeviceGroup = o.NavDeviceGroups.Name,
+            DeviceGroup = o.NavDeviceGroups == null ? "" : o.NavDeviceGroups.Name,
             FirmwareVersion = o.FirmwareVersion,
             Active = o.Active
         }).ToList();
@@ -216,7 +216,7 @@ public class AssetsBusinessLogic : IAssetsBusinessLogic
             Id = assets.Id,
             Name = assets.Name,
             SerialNumber = assets.SerialNumber,
-            DeviceGroupId = assets.DeviceGroupId,
+            DeviceGroupId = (int)assets.DeviceGroupId,
             FirmwareVersion = assets.FirmwareVersion,
             Active = assets.Active
         };

@@ -11,7 +11,7 @@ public class DeviceGroupViewModel
     public int Id { get; set; }
     
     [Display(Name = "Parent Device Group")]
-    public int ParentDeviceGroupId { get; set; }
+    public int? ParentDeviceGroupId { get; set; }
     public List<GlobalViewModel.DropdownListViewModel> ParentDeviceGroupList { get; set; }
     
     [StringLength(512, MinimumLength = 1, ErrorMessage = "Must be between 1 and 512 characters")]
