@@ -9,8 +9,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\AssetsBusinessLogic\AssetsBusinessLogic.csproj" />
-        <ProjectReference Include="..\Assets\DataAccessLayer.csproj" />
-        <ProjectReference Include="..\Assets\AssetsBusinessLogic.csproj" />
         <ProjectReference Include="..\DataAccessLayer\DataAccessLayer.csproj" />
     </ItemGroup>
 </Project>

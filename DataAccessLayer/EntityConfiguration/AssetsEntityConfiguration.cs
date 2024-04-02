@@ -26,6 +26,11 @@ public class AssetsEntityConfiguration : IEntityTypeConfiguration<Assets>
             .HasMaxLength(512);
 
         modelBuilder
+            .Property(x => x.FirmwareVersion)
+            .IsRequired()
+            .HasMaxLength(5);
+
+        modelBuilder
             .Property(x => x.CreatedOnDateTime)
             .IsRequired()
             .HasColumnType("datetime2(0)");
@@ -37,5 +42,12 @@ public class AssetsEntityConfiguration : IEntityTypeConfiguration<Assets>
         modelBuilder
             .Property(x => x.Active)
             .IsRequired();
+        
+        modelBuilder
+            .HasOne(asset => asset.NavDeviceGroups)
+            .WithMany(group => group.NavAssets)
+            .HasPrincipalKey(group => group.Id)
+            .HasForeignKey(asset => asset.DeviceGroupId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

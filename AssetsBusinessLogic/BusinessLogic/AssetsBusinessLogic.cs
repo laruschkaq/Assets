@@ -1,4 +1,6 @@
 ﻿using AssetsBusinessLogic.BusinessLogicInterface;
+using DataAccesLayer.Entities;
+using DataAccesLayer.Enums;
 using DataAccessLayer.DBContext;
 using DataAccessLayer.Models;
 
@@ -8,38 +10,204 @@ public class AssetsBusinessLogic : IAssetsBusinessLogic
 {
     private readonly DbContext _dbContext;
 
-    public GlobalViewModel.ResultModel Add(AssetsViewModel data, int loggedInUserId)
+    public AssetsBusinessLogic()
     {
-        return new GlobalViewModel.ResultModel();
+        _dbContext = new DbContext();
+    }
+    public GlobalViewModel.ResultModel Add(AssetsViewModel data)
+    {
+        using var transaction = _dbContext.Database.BeginTransaction();
+        try
+        {
+            bool assetExist = false;
+            var exists =
+                _dbContext.Assets.FirstOrDefault(x => x.SerialNumber == data.SerialNumber && x.Name == data.Name);
+            if (exists != null)
+                assetExist = true;
+
+            if (assetExist)
+                return new GlobalViewModel.ResultModel()
+                {
+                    Message = "Asset with Name " + data.Name + " and Serial Number " + data.SerialNumber +
+                              " already exists"
+                };
+
+            var asset = new Assets()
+            {
+                Name = data.Name,
+                SerialNumber = data.SerialNumber,
+                Active = true,
+                DeviceGroupId = data.DeviceGroupId,
+                CreatedOnDateTime = DateTime.Now
+            };
+
+            _dbContext.Add(asset);
+            _dbContext.SaveChanges();
+
+            transaction.Commit();
+
+            return new GlobalViewModel.ResultModel
+            {
+                Id = (int)GlobalEnums.EnumResultValues.Success, Message = "Success"
+            };
+        }
+        catch (Exception ex)
+        {
+            transaction.Rollback();
+        }
+
+        return new GlobalViewModel.ResultModel()
+        {
+            Id = (int)GlobalEnums.EnumResultValues.Failed,
+            Message = "Failed"
+        };
     }
 
-    public GlobalViewModel.ResultModel Update(AssetsViewModel data, int loggedInUserId)
+    public GlobalViewModel.ResultModel Update(AssetsViewModel data)
     {
-        return new GlobalViewModel.ResultModel();
+        using var transaction = _dbContext.Database.BeginTransaction();
+        try
+        {
+            var existingAsset =
+                _dbContext.Assets.FirstOrDefault(x => x.Id == data.Id);
+            if (existingAsset == null)
+                return new GlobalViewModel.ResultModel()
+                {
+                    Message = "Asset could not be found"
+                };
+
+            existingAsset.Name = data.Name;
+            existingAsset.SerialNumber = data.SerialNumber;
+            existingAsset.Active = true;
+            existingAsset.DeviceGroupId = data.DeviceGroupId;
+            existingAsset.LastModifiedOnDateTime = DateTime.Now;
+
+            _dbContext.SaveChanges();
+
+            transaction.Commit();
+
+            return new GlobalViewModel.ResultModel
+            {
+                Id = (int)GlobalEnums.EnumResultValues.Success, Message = "Success"
+            };
+        }
+        catch (Exception ex)
+        {
+            transaction.Rollback();
+        }
+
+        return new GlobalViewModel.ResultModel()
+        {
+            Id = (int)GlobalEnums.EnumResultValues.Failed,
+            Message = "Failed"
+        };
     }
 
-    public GlobalViewModel.ResultModel Deactivate(int id, int loggedInUserId)
+    public GlobalViewModel.ResultModel Deactivate(int id)
     {
-        return new GlobalViewModel.ResultModel();
+        using var transaction = _dbContext.Database.BeginTransaction();
+        try
+        {
+            var existingAsset =
+                _dbContext.Assets.FirstOrDefault(x => x.Id == id);
+            if (existingAsset == null)
+                return new GlobalViewModel.ResultModel()
+                {
+                    Message = "Asset could not be found"
+                };
+
+            existingAsset.Active = false;
+            existingAsset.LastModifiedOnDateTime = DateTime.Now;
+
+            _dbContext.SaveChanges();
+
+            transaction.Commit();
+
+            return new GlobalViewModel.ResultModel
+            {
+                Id = (int)GlobalEnums.EnumResultValues.Success, Message = "Success"
+            };
+        }
+        catch (Exception ex)
+        {
+            transaction.Rollback();
+        }
+
+        return new GlobalViewModel.ResultModel()
+        {
+            Id = (int)GlobalEnums.EnumResultValues.Failed,
+            Message = "Failed"
+        };
     }
 
-    public GlobalViewModel.ResultModel Reactivate(int id, int loggedInUserId)
+    public GlobalViewModel.ResultModel Reactivate(int id)
     {
-        return new GlobalViewModel.ResultModel();
+        using var transaction = _dbContext.Database.BeginTransaction();
+        try
+        {
+            var existingAsset =
+                _dbContext.Assets.FirstOrDefault(x => x.Id == id);
+            if (existingAsset == null)
+                return new GlobalViewModel.ResultModel()
+                {
+                    Message = "Asset could not be found"
+                };
+
+            existingAsset.Active = true;
+            existingAsset.LastModifiedOnDateTime = DateTime.Now;
+
+            _dbContext.SaveChanges();
+
+            transaction.Commit();
+
+            return new GlobalViewModel.ResultModel
+            {
+                Id = (int)GlobalEnums.EnumResultValues.Success, Message = "Success"
+            };
+        }
+        catch (Exception ex)
+        {
+            transaction.Rollback();
+        }
+
+        return new GlobalViewModel.ResultModel()
+        {
+            Id = (int)GlobalEnums.EnumResultValues.Failed,
+            Message = "Failed"
+        };
     }
 
-    // public DataSourceResult PopulateGrid(DataSourceRequest data, int loggedInUserId)
+    // public DataSourceResult PopulateGrid(DataSourceRequest data)
     // {
     //     return null;
     // }
 
-    public IEnumerable<GlobalViewModel.DropdownListViewModel> GetAllActivePatientInformation(int loggedInUserId)
+    public IEnumerable<GlobalViewModel.DropdownListViewModel> GetAllActiveAssets(int loggedInUserId)
     {
-        return null;
+        return _dbContext.Assets.Where(x => x.Active == true).Select(a =>
+            new GlobalViewModel.DropdownListViewModel()
+            {
+                Id = Convert.ToInt32(a.Id),
+                Name = a.Name + " (" + a.SerialNumber + ")",
+            }).OrderBy(a => a.Name).ToList();
     }
 
-    public AssetsViewModel GetAssetsInformation(int id, int loggedInUserId)
+    public AssetsViewModel GetAssetsInformation(int id)
     {
-        return null;
+        var assets =
+            _dbContext.Assets.FirstOrDefault(x => x.Id == id);
+
+        if (assets == null)
+            return new AssetsViewModel();
+
+        var result = new AssetsViewModel()
+        {
+            Id = assets.Id,
+            Name = assets.Name,
+            SerialNumber = assets.SerialNumber,
+            DeviceGroupId = assets.DeviceGroupId,
+            Active = assets.Active
+        };
+        return result;
     }
 }

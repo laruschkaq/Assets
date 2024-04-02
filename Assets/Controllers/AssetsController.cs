@@ -1,6 +1,12 @@
-﻿namespace Assets.Controllers;
+﻿using Microsoft.AspNetCore.Mvc;
 
-public class AssetsController
+namespace Assets.Controllers;
+
+public class AssetsController : Controller
 {
     
+    public IActionResult Assets()
+    {
+        return View();
+    }
 }
