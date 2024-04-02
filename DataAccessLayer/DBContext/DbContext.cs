@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using DataAccesLayer.Entities;
-using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace DataAccessLayer.DBContext;
